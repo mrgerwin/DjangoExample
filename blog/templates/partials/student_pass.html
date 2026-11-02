@@ -1,0 +1,52 @@
+<!-- student_pass.html -->
+<DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<div class="max-w-md mx-auto my-8 p-6 bg-white rounded-lg shadow-md border border-gray-100">
+    
+    <!-- Header Section -->
+    <div class="flex items-center space-x-3 mb-6">
+        <span class="text-3xl">🎫</span>
+        <h1 class="text-2xl font-bold text-gray-800">Digital Hall Pass</h1>
+    </div>
+
+    <form method="post" class="pass-request-form">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_date">Date of Pass:</label>
+        {{ form.pass_date }}
+    </div>
+    <div class="form-group">
+        <label for="id_date">Period of Pass:</label>
+        {{ form.period }}
+    </div>
+    
+    <div class="form-group">
+        <label for="id_student">Input Student:</label>
+        {{ form.student }}
+    </div>
+    
+    <div class="form-group">
+        <label for="id_steacher">Sending Teacher:</label>
+        {{ form.sending_teacher }}
+    </div>
+    
+    <div class="form-group">
+        <label for="id_rteacher">Receiving Teacher:</label>
+        {{ form.receiving_teacher }}
+    </div>
+    
+    <div class="form-group">
+        <label for="id_destination">Destination:</label>
+        {{ form.destination }}
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Request Pass</button>
+</form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+<!-- templates/partials/notification_alert.html -->
+{% for request in requests %}
+<div class="alert-popup" style="background-color: #ffeeba; border: 1px solid #ffe8a1; padding: 15px; margin: 10px; border-radius: 5px;">
+    <strong>🔔 Pass Request!</strong> 
+    {{ request.student.username }} wants to go to the <strong>{{ request.destination }}</strong>.
+    <button onclick="this.parentElement.remove()">Dismiss</button>
+</div>
+{% endfor %}
+
+<!-- Optional: Play a subtle notification sound for the teacher -->
+<audio autoplay>
+    <source src="https://mixkit.co" type="audio/wav">
+</audio>
