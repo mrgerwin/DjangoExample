@@ -1,0 +1,22 @@
+
+<!-- teacher_dashboard.html -->
+<DOCTYPE html>
+<html>
+<head>
+    <!-- Include HTMX via CDN -->
+    <script src="https://unpkg.com"></script>
+</head>
+<body>
+    <!-- A hidden div that pings the server every 5 seconds -->
+    <div hx-get="{% url 'check_notifications' %}" 
+         hx-trigger="every 5s" 
+         hx-swap="innerHTML" 
+         id="notification-container">
+         <!-- New notification cards or audio tags will injection here dynamically -->
+    </div>
+
+    <h1>Teacher Dashboard</h1>
+    <!-- Rest of your dashboard content -->
+    <a href="{% url 'new_pass' %}">Make New Pass</a>
+</body>
+</html>

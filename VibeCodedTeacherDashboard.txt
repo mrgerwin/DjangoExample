@@ -1,0 +1,75 @@
+<!-- teacher_dashboard.html -->
+<div class="max-w-6xl mx-auto my-8 p-6">
+    
+    <!-- Top Bar with Stats Overview -->
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center border-b pb-6 mb-6">
+        <div>
+            <h1 class="text-3xl font-extrabold text-gray-900">Pass Management</h1>
+            <p class="text-sm text-gray-500">Room 204 — Computer Science Hub</p>
+        </div>
+        <div class="flex space-x-4 mt-4 md:mt-0">
+            <div class="bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg text-center">
+                <span class="block text-2xl font-bold text-blue-700">1</span>
+                <span class="text-xs text-blue-600 uppercase font-semibold">Out Now</span>
+            </div>
+            <div class="bg-yellow-50 border border-yellow-200 px-4 py-2 rounded-lg text-center">
+                <span class="block text-2xl font-bold text-yellow-700">2</span>
+                <span class="text-xs text-yellow-600 uppercase font-semibold">Pending</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Split Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- COLUMN 1 & 2: Incoming Live Requests -->
+        <div class="lg:col-span-2 space-y-4">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                <span class="mr-2">🚨</span> Live Requests
+            </h2>
+
+            <!-- HTMX dynamic target container -->
+            <div id="live-requests-container" class="space-y-3">
+                <!-- Sample Request Card -->
+                <div class="p-4 bg-white border-l-4 border-yellow-500 rounded-r-lg shadow-sm flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-lg">Alex Rivera</h4>
+                        <p class="text-sm text-gray-600">Destination: <span class="font-semibold text-gray-800">📚 Library</span></p>
+                        <p class="text-xs text-gray-400 mt-1">Requested 45 seconds ago</p>
+                    </div>
+                    <!-- Rapid Action Control Buttons -->
+                    <div class="flex space-x-2">
+                        <button class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded shadow transition text-sm">
+                            Approve
+                        </button>
+                        <button class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-medium rounded transition text-sm">
+                            Deny
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMN 3: Right Sidebar — Active Passes Log -->
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                <span class="mr-2">🏃‍♂️</span> Currently Out of Room
+            </h2>
+            
+            <div class="space-y-3">
+                <!-- Student out of room block -->
+                <div class="p-3 bg-white border rounded-lg shadow-xs flex justify-between items-center">
+                    <div>
+                        <p class="font-semibold text-gray-800 text-sm">Chloe Jenkins</p>
+                        <p class="text-xs text-gray-500">🚽 Restroom • Left at 2:10 PM</p>
+                    </div>
+                    <!-- Visual counter token -->
+                    <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded font-mono font-bold animate-pulse">
+                        4m out
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
