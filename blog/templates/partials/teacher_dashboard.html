@@ -17,6 +17,275 @@
 
     <h1>Teacher Dashboard</h1>
     <!-- Rest of your dashboard content -->
+    <form method="get">
+        <label for='teacher'>Select Teacher</label>
+        <select name="teacher" id="teacher">
+            <option value="">Select Teacher</option>
+            
+            {% for teacher in teachers %}
+                <option value = "{{teacher.id}}"> {{teacher.lastName}}
+                    {% if selected_teacher == teacher.id|stringformat:"s" %}
+                        selected
+                     {% endif %}
+                </option>
+            {% endfor%}
+            
+         </select>
+    
+        <label for="period">Period:</label>
+        <select name="period" id="period">
+
+            <option value="SUCCESS"
+                {% if selected_period == "SUCCESS" %}
+                    selected
+                {% endif %}>
+                Success
+            </option>
+
+            <option value="SH"
+                {% if selected_period == "SH" %}
+                    selected
+                {% endif %}>
+                Study Hall
+            </option>
+        </select>
+        
+        <button type="submit">Show Students</button>
+
+    </form>
+
+    <hr>
+    <h3>Students you are Receiving</h3>
+    <b> Pending </b>
+    <ul>
+        {% for pass in receiving_passes_p%}
+            <li>
+                {{pass}}
+                <form method="post"
+                          action="{% url 'update_status' pass.id %}">
+                        {% csrf_token %}
+                        
+                        <input type="hidden" name="teacher" value="{{ selected_teacher }}">
+                        <input type="hidden" name="period" value="{{ selected_period }}">
+
+                        <button type="submit" name="status" value="APPROVED">
+                            Approve
+                        </button>
+
+                        <button type="submit" name="status" value="DENIED">
+                            Deny
+                        </button>
+                    </form>
+            </li>
+            {% empty %}
+                <li>No Current Passes</li>
+            {% endfor %}
+    </ul>
+    <b> Approved </b>
+    <ul>
+        {% for pass in receiving_passes_a%}
+            <li>
+                {{pass}}
+                <form method="post"
+                          action="{% url 'update_status' pass.id %}">
+                        {% csrf_token %}
+                        
+                        <input type="hidden" name="teacher" value="{{ selected_teacher }}">
+                        <input type="hidden" name="period" value="{{ selected_period }}">
+                        <input type="hidden"
+                               name="status"
+                               value="RETURNED">
+
+                        <button type="submit">
+                            Return Student
+                        </button>
+                    </form>
+            </li>
+            {% empty %}
+                <li>No Current Passes</li>
+            {% endfor %}
+    </ul>
+    <b> Received </b>
+    <ul>
+        {% for pass in receiving_passes_RECEIVED%}
+            <li>
+                {{pass}}
+                <form method="post"
+                          action="{% url 'update_status' pass.id %}">
+                        {% csrf_token %}
+                        
+                        <input type="hidden" name="teacher" value="{{ selected_teacher }}">
+                        <input type="hidden" name="period" value="{{ selected_period }}">
+                        <input type="hidden"
+                               name="status"
+                               value="RETURNED">
+
+                        <button type="submit">
+                            Return Student
+                        </button>
+                    </form>
+            </li>
+            {% empty %}
+                <li>No Current Passes</li>
+            {% endfor %}
+    </ul>
+    <b> Out</b>
+    <ul>
+        {% for pass in receiving_passes_o%}
+            <li>
+                {{pass}}
+                <form method="post"
+                          action="{% url 'update_status' pass.id %}">
+                        {% csrf_token %}
+                        
+                        <input type="hidden" name="teacher" value="{{ selected_teacher }}">
+                        <input type="hidden" name="period" value="{{ selected_period }}">
+                        <input type="hidden"
+                               name="status"
+                               value="RECEIVED">
+
+                        <button type="submit">
+                            Student Arrived
+                        </button>
+                    </form>
+            </li>
+            {% empty %}
+                <li>No Current Passes</li>
+            {% endfor %}
+    </ul>
+    <b> Returned </b>
+    <ul>
+        {% for pass in receiving_passes_r%}
+            <li>
+                {{pass}}
+            </li>
+            {% empty %}
+                <li>No Current Passes</li>
+            {% endfor %}
+    </ul>
+    <h3>Students for {{selected_teacher_name}} in {{selected_period}}</h3>
+
+    <ul>
+    {% for student in students %}
+        <li>
+            {{ student.lastName }}, {{ student.firstName }}
+            <a href="{% url 'new_pass' %}?student={{ student.id }}&teacher={{ selected_teacher }}&period={{ selected_period }}">
+                Create Pass
+            </a>
+        </li>
+    {% empty %}
+        <li>No students selected.</li>
+    {% endfor %}
+    </ul>
+    <h3>Students in your Success/SH with Hall Passes</h3>
+    <div class="flex space-x-4 mt-4 md:mt-0">
+            <div class="bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg text-center">
+                <span class="block text-2xl font-bold text-blue-700">1</span>
+                <span class="text-xs text-blue-600 uppercase font-semibold">Returned</span>
+                <ul>
+                {% for pass in returned_passes%}
+                <li>
+                    {{pass}}
+                </li>
+                {% empty %}
+                    <li>No Current Passes</li>
+                {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg text-center">
+                <span class="block text-2xl font-bold text-blue-700">2</span>
+                <span class="text-xs text-blue-600 uppercase font-semibold">Out Now or Received at Destination</span>
+                <ul>
+                {% for pass in out_passes%}
+                <li>
+                    {{pass}}
+                    <form method="post"
+                          action="{% url 'update_status' pass.id %}">
+                        {% csrf_token %}
+                        
+                        <input type="hidden" name="teacher" value="{{ selected_teacher }}">
+                        <input type="hidden" name="period" value="{{ selected_period }}">
+                        <input type="hidden"
+                               name="status"
+                               value="RETURNED">
+
+                        <button type="submit">
+                            Student Returned
+                        </button>
+                    </form>
+                    
+                </li>
+                {% empty %}
+                    <li>No Current Passes</li>
+                {% endfor %}
+                {% for pass in received_passes%}
+                <li>
+                    {{pass}}
+                    <form method="post"
+                          action="{% url 'update_status' pass.id %}">
+                        {% csrf_token %}
+                        
+                        <input type="hidden" name="teacher" value="{{ selected_teacher }}">
+                        <input type="hidden" name="period" value="{{ selected_period }}">
+                        <input type="hidden"
+                               name="status"
+                               value="RETURNED">
+
+                        <button type="submit">
+                            Student Returned
+                        </button>
+                    </form>
+                    
+                </li>
+                {% empty %}
+                    <li>No Current Passes</li>
+                {% endfor %}
+                </ul>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg text-center">
+                <span class="block text-2xl font-bold text-blue-700">3</span>
+                <span class="text-xs text-blue-600 uppercase font-semibold">Approved</span>
+                <ul>
+                {% for pass in approved_passes%}
+                <li>
+                    {{pass}}
+                    <form method="post"
+                          action="{% url 'update_status' pass.id %}">
+                        {% csrf_token %}
+                        
+                        <input type="hidden" name="teacher" value="{{ selected_teacher }}">
+                        <input type="hidden" name="period" value="{{ selected_period }}">
+                        <input type="hidden"
+                               name="status"
+                               value="OUT">
+
+                        <button type="submit">
+                            Send Student
+                        </button>
+                    </form>
+                </li>
+                {% empty %}
+                    <li>No Current Passes</li>
+                {% endfor %}
+                </ul>
+            </div>
+            <div class="bg-yellow-50 border border-yellow-200 px-4 py-2 rounded-lg text-center">
+                <span class="block text-2xl font-bold text-yellow-700">4</span>
+                <span class="text-xs text-yellow-600 uppercase font-semibold">Pending</span>
+                <ul>
+                {% for pass in pending_passes%}
+                <li>
+                    {{pass}}
+                </li>
+                {% empty %}
+                    <li>No Current Passes</li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    
+    
     <a href="{% url 'new_pass' %}">Make New Pass</a>
 </body>
 </html>

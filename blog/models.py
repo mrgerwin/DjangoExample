@@ -67,9 +67,9 @@ class HallPassRequest(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
         max_length = 20,
-        choices = [('PENDING', 'Pending'), ('APPROVED', 'Approved'), ('DENIED', 'Denied')], default='PENDING'
+        choices = [('PENDING', 'Pending'), ('APPROVED', 'Approved'), ('OUT', "Out"), ('ARRIVED', "Arrived"), ('RETURNED', 'Returned'),('DENIED', 'Denied')], default='PENDING'
         )
     is_notified = models.BooleanField(default=False)
     
     def __str__(self):
-        return f"{self.student} -> from {self.sending_teacher} to {self.receiving_teacher} with destination {self.destination} ({self.status})"
+        return f"{self.student} -> from {self.sending_teacher} to {self.receiving_teacher} with destination reason {self.destination} ({self.status})"

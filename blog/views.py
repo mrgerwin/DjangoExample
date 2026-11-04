@@ -1,11 +1,30 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Post, HallPassRequest
+from .models import Post, HallPassRequest, Teacher, Student
 from django.utils import timezone
 from .forms import PostForm, HallPassForm
 from django.shortcuts import redirect
+from django.urls import reverse
+
 
 # Create your views here.
 
+def update_status(request, pass_id):
+    if request.method == "POST":
+        hallpass = get_object_or_404(
+            HallPassRequest,
+            id=pass_id
+        )
+
+        hallpass.status = request.POST.get("status")
+        hallpass.save()
+        teacher = request.POST.get("teacher")
+        period = request.POST.get("period")
+
+        return redirect(
+            f"{reverse('teacher_dashboard')}?teacher={teacher}&period={period}"
+        )
+
+    return redirect("teacher_dashboard")
 
 def HallPass(request):
     print(request)
@@ -20,6 +39,7 @@ def HallPass(request):
             tempDestination = form.cleaned_data.get('destination')
             tempSendingTeacher = form.cleaned_data.get('sending_teacher')
             tempReceivingTeacher = form.cleaned_data.get('receiving_teacher')
+            tempStatus = form.cleaned_data.get('status')
             
             hallpass.period = tempPeriod
             hallpass.pass_date = tempDate
@@ -28,18 +48,88 @@ def HallPass(request):
             hallpass.sending_teacher = tempSendingTeacher
             hallpass.receiving_teacher = tempReceivingTeacher
             hallpass.timestamp = timezone.now()
-            hallpass.status = "PENDING"
+            hallpass.status = tempStatus
             hallpass.is_notified = False
             hallpass.save()
-            return render(request, 'partials/teacher_dashboard.html', {})
+            
+            return redirect('teacher_dashboard')
         else:
             print("form errors:", form.errors)
     else:
-        form = HallPassForm()
+        
+        initial_data = {
+        'student': request.GET.get('student'),
+        'sending_teacher': request.GET.get('teacher'),
+        'period': request.GET.get('period'),
+        }
+
+    form = HallPassForm(initial=initial_data)
     return render(request, 'partials/student_pass.html', {'form':form})
 
 def teacher_dashboard(request):
-    return render(request, 'partials/teacher_dashboard.html', {})
+    teachers = Teacher.objects.all()
+
+    selected_teacher = request.GET.get('teacher')
+    selected_period = request.GET.get('period')
+    selected_teacher_name = None
+    students = []
+    receiving_passes_p=[]
+    receiving_passes_a=[]
+    receiving_passes_o=[]
+    receiving_passes_r=[]
+    receiving_passes_RECEIVED=[]
+    
+    pending_passes = []
+    approved_passes = []
+    out_passes =[]
+    returned_passes =[]
+
+    if selected_teacher and selected_period:
+        selected_teacher_name = Teacher.objects.get(id=selected_teacher)
+        selected_teacher = int(selected_teacher)
+        print(type(selected_teacher))
+        if selected_period == "SUCCESS":
+            students = Student.objects.filter(
+                successTeacher_id=selected_teacher
+            ).order_by('lastName', 'firstName')
+
+        elif selected_period == "SH":
+            students = Student.objects.filter(
+                shTeacher_id=selected_teacher
+            ).order_by('lastName', 'firstName')
+        if selected_teacher:
+            pending_passes = HallPassRequest.objects.filter(sending_teacher_id = selected_teacher, status='PENDING')
+            approved_passes = HallPassRequest.objects.filter(sending_teacher_id = selected_teacher, status='APPROVED')
+            out_passes = HallPassRequest.objects.filter(sending_teacher_id = selected_teacher, status='OUT')
+            returned_passes = HallPassRequest.objects.filter(sending_teacher_id = selected_teacher, status='RETURNED')
+            received_passes = HallPassRequest.objects.filter(sending_teacher_id = selected_teacher, status='RECEIVED')
+            receiving_passes_p = HallPassRequest.objects.filter(receiving_teacher_id = selected_teacher, status='PENDING')
+            receiving_passes_a = HallPassRequest.objects.filter(receiving_teacher_id = selected_teacher, status='APPROVED')
+            receiving_passes_o = HallPassRequest.objects.filter(receiving_teacher_id = selected_teacher, status='OUT')
+            receiving_passes_r = HallPassRequest.objects.filter(receiving_teacher_id = selected_teacher, status='RETURNED')
+            receiving_passes_RECEIVED=HallPassRequest.objects.filter(receiving_teacher_id = selected_teacher, status='RECEIVED')
+
+
+    context = {
+        'teachers': teachers,
+        'students': students,
+        'selected_teacher': selected_teacher,
+        'selected_period': selected_period,
+        'selected_teacher_name': selected_teacher_name,
+        'pending_passes': pending_passes,
+        'approved_passes': approved_passes,
+        'out_passes': out_passes,
+        'returned_passes': returned_passes,
+        'received_passes': received_passes,
+        'receiving_passes_p': receiving_passes_p,
+        'receiving_passes_a': receiving_passes_a,
+        'receiving_passes_o': receiving_passes_o,
+        'receiving_passes_r': receiving_passes_r,
+        'receiving_passes_RECEIVED': receiving_passes_RECEIVED,
+        
+    }
+    
+    return render(request, 'partials/teacher_dashboard.html', context)
 
 def check_teacher_notifications(request):
     #print("checked server")
