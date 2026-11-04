@@ -7,5 +7,6 @@ urlpatterns = [
     path('post/new/', views.post_new, name='post_new'),
     path('post/<int:pk>/', views.post_detail, name='post_detail'),
     path('new_pass', views.HallPass, name='new_pass'),
-    path('partials/error.html', views.error , name='error')
+    path('partials/error.html', views.error , name='error'),
+    path('update_status/<int:pass_id>/',views.update_status,name='update_status'),
     ]
